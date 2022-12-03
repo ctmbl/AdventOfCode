@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-char* FILENAME = "input1.txt";
+char* FILENAME = "input.txt";
 
 typedef struct elf {
 	int num;
