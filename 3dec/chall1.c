@@ -5,7 +5,8 @@
 #include <stdbool.h>
 #include <string.h>
 
-char* FILENAME = "input.txt";
+static char* FILENAME = "input.txt";
+static char alphabet[] = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
 bool in(char chr, char* str);
 
@@ -18,6 +19,7 @@ int main(int argc, char** argv){
 	char* line = NULL;
 	int i = 0;
 	int c = 0;
+	int tot = 0;
 	while(1){
 		c = getline(&line, &i, input_file);
 		if(c == -1)
@@ -28,11 +30,18 @@ int main(int argc, char** argv){
 			puts("error on line length!!!!");
 			exit(1);
 		}
-
-
+		int mid = (int)(c/2);
+		for(int k = 0; k < mid; k++){
+			if(in(line[k], (line+mid))){
+				char chr[2] = {*(line+k), '\0'};
+				tot += strcspn(alphabet, chr)+1;
+				break;
+			}
+		}
 		free(line);
 		line = NULL;
 	}
+	printf("total: %d\n", tot);
 	fclose(input_file);
 	return 0;
 }
