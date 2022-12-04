@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 
-char* FILENAME = "input.txt";
+static char* FILENAME = "input.txt";
 
 int main(int argc, char** argv){
 	char* filename = FILENAME;
