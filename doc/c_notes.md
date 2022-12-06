@@ -1,6 +1,6 @@
 A collection of notes about the C programming language
 
-:warning: : **I strongly advised to read `man <function>` before using it I don't provide any guarantee about the information of this document**
+:warning: **I strongly advise you to read `man <function>` before using it I don't provide any guarantee on the information in this document**
 
 ### Stream I/O
 Standard:
@@ -20,6 +20,7 @@ Standard:
    - `strol` `strtoll` `strtoq`
  - Simpler (equivalent to above without keeping endptr and always base 10): 
    - `atoi` `atol` `atoll`
+
 Non-standard (BSD from `libbsd`, inlude `inttypes.h`, flag `-lbsd`):
  - `strtoi` `strtou`
 
