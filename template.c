@@ -1,6 +1,7 @@
 #!/usr/bin/tcc -run
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 static char* FILENAME = "input.txt";
@@ -14,11 +15,17 @@ int main(int argc, char** argv){
 	char* line = NULL;
 	int i = 0;
 	int c = 0;
+	int tot = 0;
 	while(1){
 		c = getline(&line, &i, input_file);
 		if(c == -1)
 			break;
+		/* code goes here */
+		free(line);
+		line = NULL;
+		i = 0;
 	}
+	printf("%d\n", tot);
 	fclose(input_file);
 	return 0;
 }
