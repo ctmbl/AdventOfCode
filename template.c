@@ -13,9 +13,9 @@ int main(int argc, char** argv){
 	}
 	FILE* input_file = fopen(filename, "r");
 	char* line = NULL;
-	int i = 0;
+	size_t i = 0;
 	int c = 0;
-	int tot = 0;
+	size_t tot = 0;
 	while(1){
 		c = getline(&line, &i, input_file);
 		if(c == -1)
