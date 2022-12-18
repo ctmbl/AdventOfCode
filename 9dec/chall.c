@@ -34,6 +34,8 @@ int main(int argc, char** argv){
 	while(-1 != (c = getline(&line, &i, input_file))){
 		sscanf(line,"%c %d", &dir, &steps);
 		while(steps != 0){
+		//printf("H %d %d\n", head.x, head.y);
+		//printf("T %d %d\n", tail.x, tail.y);
 			move(dir);
 			trace = follow(trace, &tot);
 			steps--;
@@ -61,12 +63,11 @@ void move(char dir){
 		default : printf("'%c' is not a direction\n", dir);
 			  break;
 	}
-	printf("%d %d\n", head.x, head.y);
 }
 static bool in(pos p, pos* list, int length){
 	if(list == NULL)
 		return false;
-	printf("last item: %d %d\n", list[length-1].x, list[length-1].y);
+	//printf("last item: %d %d\n", list[length-1].x, list[length-1].y);
 	for(int k = 0; k < length; k++){
 		if(p.x == list[k].x && p.y == list[k].y)
 			return true;
@@ -76,20 +77,22 @@ static bool in(pos p, pos* list, int length){
 pos* follow(pos* trace, size_t* tot){
 	int dec_x = abs(head.x - tail.x);
 	int dec_y = abs(head.y - tail.y);
-	bool way_x = head.x > tail.x ? 1 : -1;
-	bool way_y = head.y > tail.y ? 1 : -1;
+	int way_x = head.x > tail.x ? 1 : -1;
+	int way_y = head.y > tail.y ? 1 : -1;
 	if(dec_x <= 1 && dec_y <= 1){
 		return trace;
 	}
 
 	if(dec_y >= 2){
-		if(dec_x >= 1)
+		if(dec_x >= 1){
 			tail.x += way_x;
+		}
 		tail.y += way_y;
 	}
 	if(dec_x >= 2){
-		if(dec_y >= 1)
+		if(dec_y >= 1){
 			tail.y += way_y;
+		}
 		tail.x += way_x;
 	}
 
@@ -100,6 +103,6 @@ pos* follow(pos* trace, size_t* tot){
 	trace = realloc(trace, (*tot) * sizeof(pos));
 	trace[(*tot)-1].x = tail.x;
 	trace[(*tot)-1].y = tail.y;
-	printf("added %d %d, tot=%d\n", trace[(*tot)-1].x,trace[(*tot)-1].y, *tot);
+	//printf("added %d %d, tot=%d\n", trace[(*tot)-1].x,trace[(*tot)-1].y, *tot);
 	return trace;
 }
