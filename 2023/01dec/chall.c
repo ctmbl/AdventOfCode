@@ -8,8 +8,13 @@
 //static char* FILENAME = "input.ex.txt";
 static char* FILENAME = "input.txt";
 
-int is_digit_part1(char* c){
-	return isdigit(*c);
+int is_digit_part1(char* c, char* d){
+	if(isdigit(*c)){
+		*d = *c;
+		//printf("DEBUG: found digit it's %c\n", *d);
+		return 1;
+	}
+	return 0;
 }
 
 int is_digit_in_letters(char* c, char* d){
@@ -25,11 +30,8 @@ int is_digit_in_letters(char* c, char* d){
 }
 
 int is_digit_part2(char* c, char* d){
-	if(isdigit(*c)){
-		*d = *c;
-		//printf("DEBUG: found digit it's %c\n", *d);
+	if(is_digit_part1(c, d))
 		return 1;
-	}
 	return is_digit_in_letters(c, d);
 }
 
@@ -55,16 +57,20 @@ int main(int argc, char** argv){
 		char d2;
 		while(1){
 			if(!is_digit_part2(start, &d1)){
+			//if(!is_digit_part1(start, &d1)){
 				start++;
 				continue;
 			}
-			//printf("found start=%c\n", d1);
+			//printf("DEBUG: found start=%c\n", d1);
+
 			if(!is_digit_part2(end, &d2)){
+			//if(!is_digit_part1(end, &d2)){
 				end--;
 				continue;
 			}
+			//printf("DEBUG: found end=%c\n", d2);
+			
 			//printf("DEBUG: line after modif: %s\n", line);
-			//printf("found end=%c\n", d2);
 			break;
 		}
 		char nb[3] = {'a','a', '\0'};
