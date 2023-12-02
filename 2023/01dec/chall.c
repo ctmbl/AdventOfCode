@@ -30,9 +30,7 @@ int is_digit_in_letters(char* c, char* d){
 }
 
 int is_digit_part2(char* c, char* d){
-	if(is_digit_part1(c, d))
-		return 1;
-	return is_digit_in_letters(c, d);
+	return is_digit_part1(c, d) || is_digit_in_letters(c, d);
 }
 
 int main(int argc, char** argv){
@@ -52,19 +50,23 @@ int main(int argc, char** argv){
 
 		char* start = line;
 		char* end = line + strlen(line)-1 -1;
-		printf("\nDEBUG: line:=%s - start: '%c' - end '%c'\n", line, *start, *end);
-		char d1;
-		char d2;
+		//printf("\nDEBUG: line:=%s - start: '%c' - end '%c'\n", line, *start, *end);
+
+		int (*is_digit)(char*,char*);
+		// CHOOSE PART 1 or PART 2 HERE:
+		//is_digit = is_digit_part1;
+		is_digit = is_digit_part2;
+
+		char d1 = 0;
+		char d2 = 0;
 		while(1){
-			if(!is_digit_part2(start, &d1)){
-			//if(!is_digit_part1(start, &d1)){
+			if(!d1 && !is_digit(start, &d1)){
 				start++;
 				continue;
 			}
 			//printf("DEBUG: found start=%c\n", d1);
 
-			if(!is_digit_part2(end, &d2)){
-			//if(!is_digit_part1(end, &d2)){
+			if(!d2 && !is_digit(end, &d2)){
 				end--;
 				continue;
 			}
@@ -76,9 +78,11 @@ int main(int argc, char** argv){
 		char nb[3] = {'a','a', '\0'};
 		nb[0] = d1;
 		nb[1] = d2;
-		printf("DEBUG nb=%s\n", nb);
-		printf("DEBUG: %d = %d + %s\n", tot+ atoi(nb), tot, nb );
+		//printf("DEBUG nb=%s\n", nb);
+		//printf("DEBUG: %d = %d + %s\n", tot+ atoi(nb), tot, nb );
+
 		tot += atoi(nb);
+
 		free(line);
 		line = NULL;
 		i = 0;
