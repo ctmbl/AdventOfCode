@@ -38,6 +38,31 @@ int part1(char** sets, int n, int id){
 	return id;
 }
 
+int part2(char** sets, int n, int id){
+	int i = 0;
+	int max[3] = {0,0,0};
+	for(i = 0; i < n; i++){
+		int nb;
+		char* color;
+		sscanf(sets[i], " %d %ms", &nb, &color);
+
+		if(strcmp("red",color) == 0){
+			if(nb > max[0])
+				max[0] = nb;
+		}
+		else if(strcmp("green",color) == 0){
+			if(nb > max[1])
+				max[1] = nb;
+		}
+		else if(strcmp("blue",color) == 0){
+			if(nb > max[2])
+				max[2] = nb;
+		}
+		free(color);
+	}
+	return max[0]*max[1]*max[2];
+}
+
 int main(int argc, char** argv){
 	char* filename = FILENAME;
 	if (argc > 1) {
@@ -90,7 +115,8 @@ int main(int argc, char** argv){
 		n++; // because n is the SIZE of sets (nb of sets in this game)
 		//printf("DEBUG: there are %d sets in this game\n", n);
 
-		tot += part1(sets, n, id);
+		tot += part2(sets, n, id);
+		//tot += part1(sets, n, id);
 		free(line);
 		line = NULL;
 		i = 0;
