@@ -6,6 +6,38 @@
 
 static char* FILENAME = "input.txt";
 
+int RED = 12;
+int GREEN = 13;
+int BLUE = 14;
+
+int part1(char** sets, int n, int id){
+	int i = 0;
+	for(i = 0; i < n; i++){
+		int nb;
+		char* color;
+		sscanf(sets[i], " %d %ms", &nb, &color);
+		//printf("DEBUG: '%s' is '%d' '%s' balls\n", sets[i], nb, color);
+		if(strcmp("red",color) == 0){
+			if(nb > RED)
+				break;
+		}
+		else if(strcmp("green",color) == 0){
+			if(nb > GREEN)
+				break;
+		}
+		else if(strcmp("blue",color) == 0){
+			if(nb > BLUE)
+				break;
+		}
+		free(color);
+	}
+	if(i != n){
+		printf("DEBUG: impossible because of: %s\n", sets[i]);
+		return 0;
+	}
+	return id;
+}
+
 int main(int argc, char** argv){
 	char* filename = FILENAME;
 	if (argc > 1) {
@@ -17,9 +49,6 @@ int main(int argc, char** argv){
 	int c = 0;
 	size_t tot = 0;
 
-	int RED = 12;
-	int GREEN = 13;
-	int BLUE = 14;
 	while(1){
 		c = getline(&line, &i, input_file);
 		if(c == -1)
@@ -38,14 +67,15 @@ int main(int argc, char** argv){
 
 		printf("DEBUG: ID: %d - game: %s\n", id, game_str);
 
+		int MAX_NB_OF_SETS = 100;
 		char* ptr = game_str;
 		int n = 0; // number of sets in the game
-		char** sets = malloc(sizeof(char*) * 50);
+		char** sets = malloc(sizeof(char*) * MAX_NB_OF_SETS);
 
 		sets[n] = ptr;
 		//printf("DEBUG: added '%s' to the sets of game %d\n", sets[n], id);
 		while(*ptr){
-			if(*ptr == ';'){
+			if(*ptr == ';' || *ptr == ','){
 				*ptr = '\0';
 				ptr++;
 				n++;
@@ -53,22 +83,14 @@ int main(int argc, char** argv){
 				//printf("DEBUG: added '%s' to the sets of game %d\n", sets[n], id);
 				continue;
 			}
-			if(*ptr == ',')
-				*ptr=' ';
 			ptr++;
 
 			//printf("DEBUG: remains: %s\n", ptr);
 		}
 		n++; // because n is the SIZE of sets (nb of sets in this game)
-		printf("DEBUG: there are %d sets in this game\n", n);
-		for(int i = 0; i < n; i++){
-			int nb;
-			char* color;
-			sscanf(sets[i], " %d %ms", &nb, &color);
-			printf("DEBUG: '%s' is '%d' '%s' balls\n", sets[i], nb, color);
-		}
-		break;
-		tot += id;
+		//printf("DEBUG: there are %d sets in this game\n", n);
+
+		tot += part1(sets, n, id);
 		free(line);
 		line = NULL;
 		i = 0;
