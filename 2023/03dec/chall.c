@@ -47,7 +47,7 @@ int look_neighbors(char** lines, int k, int j, int part_len){
 		   check_line(lines[(k+1)%3]+j, part_len);
 }
 
-int handle_line(char** lines, int k, int* p_tot){
+void handle_line1(char** lines, int k, int* p_tot){
 	for(int j = 1; j < len+1; j++){ // starts at 1 and stop at len: ..45.. head and tail . are fillers
 		if(!isdigit(lines[k][j]))
 			continue;
@@ -59,6 +59,43 @@ int handle_line(char** lines, int k, int* p_tot){
 		printf("DEBUG: part: %d; length %d\n", part, part_len);
 		*p_tot += look_neighbors(lines, k, j, part_len) * part;
 		j+=part_len;
+	}
+}
+
+void find_part_start(char** part){
+	while(isdigit(*(*part-1)))
+		(*part)--;
+}
+
+void handle_line2(char** lines, int k, int* p_tot){
+	for(int j = 1; j < len+1; j++){ // starts at 1 and stop at len: ..45.. head and tail . are fillers
+		if(lines[k][j] != '*')
+			continue;
+
+		char* parts[2] = {NULL,NULL};
+		int i = 0;
+		for(int m = -1; m <= 1; m++){
+			int mm = (m+k+3)%3; // probably useless we could study with 0<= m <=2 it should work too
+			for(char* ptr = lines[mm]+j-1; ptr <= lines[mm]+j+1; ptr++){
+				if(isdigit(*ptr)){
+					strtol(ptr, &ptr, 10);
+					parts[i] = ptr;
+					i++;
+				}
+			}
+		}
+		if(i > 2)
+			exit(13);
+		if(i < 2)
+			continue;
+
+		find_part_start(parts);
+		find_part_start(parts+1);
+
+		int part1 = atoi(parts[0]);
+		int part2 = atoi(parts[1]);
+		printf("DEBUG: found a gear and 2 parts: %d and %d\n", part1, part2);
+		*p_tot += part1*part2;
 	}
 }
 
@@ -88,6 +125,8 @@ int main(int argc, char** argv){
 	int i = 2; // row in lines to write to
 	int n = 1; // total nb of rows
 	size_t tot = 0;
+
+	void (*handle_line)(char**, int, int*) = handle_line2; // choose part 1 or 2
 	while(1){
 		buf = fgets(lines[i]+1, len+2, input_file);
 		if(!buf) // allow to stop on empty lines OR EOF errors
