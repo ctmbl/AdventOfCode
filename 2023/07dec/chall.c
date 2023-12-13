@@ -7,13 +7,18 @@
 
 static char* FILENAME = "input.txt";
 
+int (*hand_type)(char*);
+int (*strength)(char);
+
 typedef struct {
 	char cards[6];
 	int rank;
 	int bid;
 } hand;
 
-int strength(char c){
+
+
+int strength_part1(char c){
 	switch (c)
 	{
 	case 'A':
@@ -32,6 +37,27 @@ int strength(char c){
 	}
 }
 
+
+int strength_part2(char c){
+	switch (c)
+	{
+	case 'A':
+		return 13; // 14 -> 13
+	case 'K':
+		return 12; // 13 -> 12
+	case 'Q':
+		return 11; // 12 -> 11
+	case 'J':
+		return 1; // Jokers are now the weakest cards
+	case 'T':
+		return 10;
+	default:
+		char str[2] = {c, 0};
+		return atoi(str);
+	}
+}
+
+
 int imax(int* l, int n){
 	int i_max = 0;
 	for (int i = 1; i < n; i++){
@@ -42,7 +68,8 @@ int imax(int* l, int n){
 	return i_max;
 }
 
-int hand_type(char h[6]){
+
+int hand_type_part1(char h[6]){
 	if(h[0] == 0){
 		return 0;
 	}
@@ -80,6 +107,76 @@ int hand_type(char h[6]){
 	}
 }
 
+
+int hand_type_part2(char h[6]){
+	if(h[0] == 0){
+		return 0;
+	}
+	int numbers_of_cards[13];
+	for(int i = 0; i<13; i++)
+		numbers_of_cards[i] = 0;
+
+	for(int i = 0; i<=4; i++){
+		numbers_of_cards[strength(h[i]) - 1]++;
+	}
+	int nb_jokers = numbers_of_cards[0];
+	numbers_of_cards[0] = 0; // we don't want to count pairs of jokers or so, we'll deal with them later
+
+	int i_max = imax(numbers_of_cards, 13);
+	int score = 0;
+	// for(int i = 0; i<13; i++)
+	// 	printf("%d ", numbers_of_cards[i]);
+	// printf("\n");
+	// printf("imax %d; card max %d \n", i_max, numbers_of_cards[i_max]);
+
+	switch (numbers_of_cards[i_max])
+	{
+	case 0: // we got all jokers!
+		score = 0;
+		break;
+	case 1: // high card
+		score = 1;
+		break;
+	case 2: // at least a pair
+		numbers_of_cards[i_max] = 0;
+		i_max = imax(numbers_of_cards, 13);
+		if(numbers_of_cards[i_max] == 2)
+			score = 3;  // two pairs!
+		else 
+			score = 2; // only one pair...
+		break;
+	case 3: // three of a kind or full house
+		numbers_of_cards[i_max] = 0;
+		i_max = imax(numbers_of_cards, 13);
+		if(numbers_of_cards[i_max] == 2)
+			score = 5; // full house!
+		else
+			score = 4; // only three of a kind
+		break;
+	default:
+		score = numbers_of_cards[i_max] + 2; // four of a kind --> 6 ; five of a kind --> 7 
+	}
+
+	// now we deal with jokers:
+	while(nb_jokers){ // if there are jokers
+		switch (score)
+		{
+		case 2: // if you have a pair, making a three of kind earns more points than a double pair
+		case 3: // if you have a double pair, making a full house is the best option
+		case 4: // if you have a three of a kind making a four earns more points than a full house
+			score += 2;
+			break;
+		
+		default:
+			score += 1;
+			break;
+		}
+		nb_jokers--;
+	}
+	return score;
+}
+
+
 int better_than(char left[6], char right[6]){
 	int ltype = hand_type(left);
 	int rtype = hand_type(right);
@@ -95,12 +192,15 @@ int better_than(char left[6], char right[6]){
 	return strength(left[card]) > strength(right[card]);
 }
 
+
 int main(int argc, char** argv){
 	char* filename = FILENAME;
 	if (argc > 1) {
 		filename = argv[1];
 	}
 	FILE* input_file = fopen(filename, "r");
+	hand_type = hand_type_part1;
+	strength = strength_part1;
 
 	size_t tot = 0;
 	size_t n = 0;
@@ -115,6 +215,15 @@ int main(int argc, char** argv){
 	assert(hand_type("AAATT") == 5);
 	assert(hand_type("AAAA9") == 6);
 	assert(hand_type("AAAAA") == 7);
+
+	// not exhaustive but better than nothing!
+	if(hand_type == hand_type_part2 && strength == strength_part2){
+		assert(hand_type("AKQTJ") == 2);
+		assert(hand_type("AKQJJ") == 4);
+		assert(hand_type("AKJJJ") == 6);
+		assert(hand_type("AJJJJ") == 7);
+		assert(hand_type("JJJJJ") == 7);
+	}
 
 	int err = 0;
 	do{
@@ -148,5 +257,6 @@ int main(int argc, char** argv){
 
 	printf("%ld\n", tot);
 	fclose(input_file);
+	free(hands);
 	return 0;
 }
