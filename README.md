@@ -1,5 +1,5 @@
-# AdventOfCode2022
-My solutions for the [Advent of Code challenges of 2022](https://adventofcode.com/2022)
+# Advent Of Code
+My solutions for the [Advent of Code challenges](https://adventofcode.com)
 > see my [notes](./doc) too
 
 I tried to do every challenge in C but sometimes you'll see other languages solutions too.  
