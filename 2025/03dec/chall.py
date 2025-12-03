@@ -1,3 +1,4 @@
+from copy import copy
 import logging
 
 LOGGER = logging.getLogger()
@@ -11,14 +12,31 @@ def get_input_lines(filename):
 
 def main(lines):
     part1 = 0
+    part2 = 0
     for line in lines:
+        # Part1:
         line = line.strip()
         d = max(line[:-1])
         u = max(line[line.index(d)+1:])
-        LOGGER.debug("Max joltage is %s%s", d, u)
+
+        # Part2:
+        max_joltage = ""
+        index = 0
+        _line = copy(line)
+        # for the 11 first digits:
+        for i in range(11, 0, -1):
+            max_n = max(_line[:-i])
+            index = _line.index(max_n)
+            _line = _line[index+1:]
+            max_joltage += max_n
+        # and the last one:
+        max_joltage += max(_line)
+        LOGGER.debug("Max joltage (part2) is %s", max_joltage)
+
         part1 += int(d+u)
+        part2 += int(max_joltage)
     LOGGER.info("Part1: %s", part1)
-    #LOGGER.info("Part2: %s", part2)
+    LOGGER.info("Part2: %s", part2)
 
 
 if __name__ == "__main__":
