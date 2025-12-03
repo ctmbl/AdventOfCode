@@ -19,8 +19,7 @@ def main(lines):
         for id_nb in ids:
             id_str = str(id_nb)
             invalid = []
-            half = len(id_str)//2
-            if len(id_str) % 2 != 1 and id_str[:half] == id_str[half:]:
+            if re.match(r"(?P<x>\d+)(?P=x)$", id_str):
                 part1 += id_nb
             if re.match(r"(?P<x>\d+)(?P=x)+$", id_str):
                 part2 += id_nb
