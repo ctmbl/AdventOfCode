@@ -12,21 +12,22 @@ def get_input_lines(filename):
 
 def main(lines):
     part1 = 0
+    part2 = 0
     ranges = [re.findall(r"\d+", _range) for _range in lines[0].split(",")]
     for a, b in ranges:
         ids = list(range(int(a), int(b)+1))
         for id_nb in ids:
             id_str = str(id_nb)
             invalid = []
-            if len(id_str) % 2 == 1:
-                continue
             half = len(id_str)//2
-            if id_str[:half] == id_str[half:]:
+            if len(id_str) % 2 != 1 and id_str[:half] == id_str[half:]:
                 part1 += id_nb
+            if re.match(r"(?P<x>\d+)(?P=x)+$", id_str):
+                part2 += id_nb
                 invalid.append(id_str)
-        LOGGER.debug("In %s-%s, invalid ids are %s", a, b, invalid)
+        LOGGER.debug("In %s-%s, invalid ids (part2) are %s", a, b, invalid)
     LOGGER.info("Part1: %s", part1)
-    #LOGGER.info("Part2: %s", part2)
+    LOGGER.info("Part2: %s", part2)
 
 
 if __name__ == "__main__":
