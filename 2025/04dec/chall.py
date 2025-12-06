@@ -24,6 +24,22 @@ def iterate_on_neighbours(i, j):
                 yield i+di, j+dj
 
 
+def remove_rolls(puzzle, width, height):
+    n = 0
+    for x in range(1, height+1):
+        for y in range(1, width+1):
+            if puzzle[x][y] != "@":
+                continue
+            neighbours = 0
+            for i, j in iterate_on_neighbours(x, y):
+                neighbours += (puzzle[i][j] == "@")
+            if neighbours < 4:
+                n += 1
+                puzzle[x] = puzzle[x][:y]+"."+puzzle[x][y+1:]
+        logging.debug("After line %s we have n at %s", x, n)
+    return puzzle, n
+
+
 def main(lines):
     part1 = 0
     part2 = 0
@@ -32,6 +48,7 @@ def main(lines):
     height = len(lines[0])
     puzzle = wrap_puzzle(lines)
     logging.debug("Shape lines: %s %s ; Shape puzzle %s %s", width, height, len(puzzle), len(puzzle[0]))
+    # Part1
     for x in range(1, height+1):
         line = lines[x]
         for y in range(1, width+1):
@@ -42,6 +59,14 @@ def main(lines):
                 neighbours += (puzzle[i][j] == "@")
             part1 += (neighbours < 4)
         logging.debug("After line %s we have part1 at %s", x, part1)
+
+    #Part2
+    puzzle, n = remove_rolls(puzzle, width, height)
+    while n:
+        part2 += n
+        LOGGER.debug("Now add %s", n)
+        puzzle, n = remove_rolls(puzzle, width, height)
+
     LOGGER.info("Part1: %s", part1)
     LOGGER.info("Part2: %s", part2)
 
