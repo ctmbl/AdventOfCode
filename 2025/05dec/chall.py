@@ -10,15 +10,29 @@ def get_input_lines(filename):
     return lines
 
 
+def sort_and_merge_ranges(ranges):
+    ranges.sort() # ranges is a list of tuple, will be sorted based on the first member
+    i = 0
+    while i < len(ranges)-1:
+        if ranges[i][1] >= ranges[i+1][0]:
+            ranges[i][1] = max(ranges[i][1], ranges[i+1][1])
+            ranges.pop(i+1)
+            continue
+        i += 1
+    return ranges
+
+
 def main(lines):
     part1 = 0
     part2 = 0
 
     sep = lines.index("\n")
-    ranges = [tuple(map(int, lines[i].strip().split("-"))) for i in range(0, sep)]
+    ranges = [list(map(int, lines[i].strip().split("-"))) for i in range(0, sep)]
     ids = [int(lines[i].strip()) for i in range(sep+1, len(lines))]
     LOGGER.debug("ranges %s", ranges)
     LOGGER.debug("ids %s", ids)
+
+    ranges = sort_and_merge_ranges(ranges)
 
     for idx in ids:
         for a, b in ranges:
@@ -26,6 +40,8 @@ def main(lines):
                 part1 += 1
                 LOGGER.debug("%s in (%s, %s)", idx, a, b)
                 break
+
+    part2 = sum([b - a +1 for a, b in ranges])
 
     LOGGER.info("Part1: %s", part1)
     LOGGER.info("Part2: %s", part2)
