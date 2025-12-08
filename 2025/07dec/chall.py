@@ -10,24 +10,32 @@ def get_input_lines(filename):
     return lines
 
 
+def add_or_set(d, key, val):
+    if key in d:
+        d[key] += val
+    else:
+        d[key] = val
+
+
 def main(lines):
     part1 = 0
     part2 = 0
 
-    js = set([lines[0].index("S")])
+    js = {lines[0].index("S") : 1}
     for line in lines[1:]:
-        new_js = set()
-        for j in js:
+        new_js = dict()
+        for j, occ in js.items():
             if line[j] == ".":
-                new_js.add(j)
+                add_or_set(new_js, j, occ)
             elif line[j] == "^":
-                new_js.add(j-1)
-                new_js.add(j+1)
+                add_or_set(new_js, j-1, occ)
+                add_or_set(new_js, j+1, occ)
                 part1 += 1
             else:
                 raise NotImplemented
-        LOGGER.debug("Split on %s in %s", new_js, line)
+        LOGGER.debug("Split on %s in %s", new_js, line.strip())
         js = new_js
+    part2 = sum(js.values())
 
     LOGGER.info("Part1: %s", part1)
     LOGGER.info("Part2: %s", part2)
