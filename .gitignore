@@ -1,0 +1,6 @@
+__pycache__/
+venv/
+
+# AoC related
+answer*
+input.*
