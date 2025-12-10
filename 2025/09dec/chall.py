@@ -15,6 +15,16 @@ def area(A, B):
     return (abs(A[0] - B[0]) + 1) * (abs(A[1] - B[1]) + 1) 
 
 
+def add_middle_points(corners):
+    c = []
+    for i in range(len(corners)):
+        A, B = corners[i-1], corners[i]
+        middle_point = ((A[0] + B[0]) // 2, (A[1] + B[1]) // 2)
+        c.append(middle_point)
+        c.append(B)
+    return c
+
+
 def main(lines):
     part1 = 0
     part2 = 0
@@ -27,6 +37,16 @@ def main(lines):
             bisect.insort(squares, (area(A, B), A, B), key = lambda x: x[0])
 
     part1 = squares[-1][0]
+
+    corners_with_middle_point = add_middle_points(corners)
+    for a, A, B in squares[::-1]:
+        contains = [C[0] < max(B[0], A[0]) and C[0] > min(B[0], A[0]) and C[1] < max(B[1], A[1]) and C[1] > min(B[1], A[1]) for C in corners_with_middle_point]
+        LOGGER.debug("%s x %s contains %s", A, B, contains)
+        if any(contains):
+            continue
+        LOGGER.debug("No tile is contained in %s x %s", A, B)
+        part2 = a
+        break
 
     LOGGER.info("Part1: %s", part1)
     LOGGER.info("Part2: %s", part2)
