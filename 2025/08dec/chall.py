@@ -32,7 +32,8 @@ def main(lines):
     dists = find_closest(list(jboxes.keys()))
     circuits = []
 
-    for i in range(10 if ARGS.example else 1000):
+    limit = 10 if ARGS.example else 1000
+    for i in range(limit):
         _, A, B = dists[i]
         A_id = jboxes.get(A)
         B_id = jboxes.get(B)
@@ -54,8 +55,43 @@ def main(lines):
             circuits[A_id].append(B)
             jboxes[B] = jboxes[A]
 
-    circuits.sort(key = lambda x: -len(x) if x is not None else -1)
-    part1 = len(circuits[0]) * len(circuits[1]) * len(circuits[2])
+    cir_len = [len(c) for c in circuits if c is not None]
+    cir_len.sort(reverse = True)
+    part1 = cir_len[0] * cir_len[1] * cir_len[2]
+
+    last_two = False
+    i = limit
+    while last_two is False:
+        _, A, B = dists[i]
+        LOGGER.debug("Inspecting %s - %s", A, B)
+        A_id = jboxes.get(A)
+        B_id = jboxes.get(B)
+        if A_id is None and B_id is None:
+            circuits.append([A, B])
+            jboxes[A] = len(circuits) - 1
+            jboxes[B] = len(circuits) - 1
+        elif A_id is not None and B_id is not None:
+            if A_id == B_id:
+                i += 1
+                continue
+            c = circuits[B_id]
+            circuits[A_id].extend(c)
+            for jb in c:
+                jboxes[jb] = jboxes[A]
+            circuits[B_id] = None
+        else:
+            A, B = A if A_id is not None else B, A if A_id is None else B
+            A_id, B_id = jboxes.get(A), None
+            circuits[A_id].append(B)
+            jboxes[B] = jboxes[A]
+
+        last_two = all([val is not None for val in jboxes.values()]) and circuits.count(None) + 2 >= len(circuits)
+        i += 1
+
+    if circuits.count(None) + 2 > len(circuits):
+        i -= 1
+    _, A, B = dists[i]
+    part2 = A[0] * B[0]
 
     LOGGER.info("Part1: %s", part1)
     LOGGER.info("Part2: %s", part2)
